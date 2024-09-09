@@ -27,7 +27,7 @@ export const User_Register = async (req, res) => {
 
     if (existuser) return res.status(400).json({ msg: "User already exist!" });
 
-    const otp = await generateUniqueOtp();
+
     const data = await User.create({ name, email, password, phone});
 
     const token =  JWT.sign(
@@ -50,22 +50,24 @@ export const User_Login = async (req, res) => {
       const { email, password} = req.body;
   
       const existuser = await User.findOne({
-        $or: [ { email: email.toLowerCase() }],
+      email: email.toLowerCase() ,
       });
 
       if(!existuser) return res.status(400).json({msg:"Invalid Credintials"});
   
       const checkPassword = existuser.password===password;
+
       if(!checkPassword) return res.status(400).json({msg:"Invalid Credintials"});
+
       const token =  JWT.sign(
-        { id: data?._id, email: data?.email },
+        { id: existuser?._id, email: existuser?.email },
         process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );
   
       res
-        .status(201)
-        .json({ msg: "User Register Successfully", data: existuser, token });
+        .status(200)
+        .json({ msg: "User Login Successfully", data: existuser, token });
     } catch (error) {
       ErrorMsg(res, error);
     }
