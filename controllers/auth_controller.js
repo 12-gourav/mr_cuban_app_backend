@@ -30,7 +30,7 @@ export const User_Register = async (req, res) => {
     const otp = await generateUniqueOtp();
     const data = await User.create({ name, email, password, phone});
 
-    const token = await JWT.sign(
+    const token =  JWT.sign(
       { id: data?._id, email: data?.email },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
@@ -48,10 +48,6 @@ export const User_Register = async (req, res) => {
 export const User_Login = async (req, res) => {
     try {
       const { email, password} = req.body;
-
-      console.log(email,password)
-
-      return res.status(200).json({data:[],token:"fdfsfss"})
   
       const existuser = await User.findOne({
         $or: [ { email: email.toLowerCase() }],
