@@ -88,7 +88,7 @@ export const AcceptOrderLead = async (req, res) => {
   }
 };
 
-export const DisplayCustomerLead = async () => {
+export const DisplayCustomerLead = async (req,res) => {
   try {
     const { id } = req.query;
 
