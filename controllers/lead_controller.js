@@ -160,7 +160,7 @@ export const CancelRideByUser = async (req, res) => {
     const { id } = req.query;
     console.log(id)
     const data = await Lead.findByIdAndDelete({ _id: id });
-    return res.status(400).json({ msg: "Order Delete Successfully", data });
+    return res.status(200).json({ msg: "Order Delete Successfully", data:[] });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
