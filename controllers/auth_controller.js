@@ -16,7 +16,7 @@ export const User_Register = async (req, res) => {
     if (existuser) return res.status(400).json({ msg: "User already exist!" });
 
     // OTP Generate
-    const otp = OTP_Generator();
+    const otp = await OTP_Generator();
 
     // User Register
     const data = await User.create({
@@ -24,7 +24,7 @@ export const User_Register = async (req, res) => {
       email: email.toLowerCase(),
       password,
       phone,
-      accountOtp: otp,
+      accountOtp: String(otp),
     });
 
     // token generate
