@@ -15,7 +15,7 @@ export const CreateLead = async (req, res) => {
       dropdate,
       id,
       otp,
-    } = req.query;
+    } = req.body;
 
     const pickupdate = new Date(pickdate).toDateString();
     const pickuptime = new Date(pickdate)?.toTimeString();
