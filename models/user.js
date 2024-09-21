@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     otp:{
-        type:Number
+        type:String
     },
     otpExpiary:{
         type:Date
