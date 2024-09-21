@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
+    driverId:String,
     customerId: String,
+    customerName: String,
     distance1: String,
     distance2: String,
     distance3: String,
@@ -18,4 +20,4 @@ const orderSchema = new mongoose.Schema(
 );
 
 
-export const CustomerOrder = mongoose.model("CustomerOrder",orderSchema);
+export const DriverOrder = mongoose.model("DriverOrder",orderSchema);
