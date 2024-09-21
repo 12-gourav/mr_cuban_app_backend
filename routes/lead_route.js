@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/create/lead", CreateLead);
 router.get("/leads", DisplayOrderLeads);
 router.post("/accept/lead/driver", AcceptOrderLead);
-router.post("/accept/lead/customer", AcceptOrderLeadByCustomer);
+router.get("/accept/lead/customer", AcceptOrderLeadByCustomer);
 router.get("/cancel/lead/customer", CancelRideByUser);
 router.get("/get/lead", DisplayCustomerLead);
 

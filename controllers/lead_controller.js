@@ -66,10 +66,10 @@ export const DisplayOrderLeads = async (req, res) => {
 export const AcceptOrderLead = async (req, res) => {
   try {
     const { price, id, driverId, driverName, model, rating, orders } =
-      req.query;
+      req.body;
 
     const order = await Lead.findById({ _id: id }, "drivers");
-
+console.log(order)
     await order.drivers.push({
       id: driverId,
       name: driverName,
@@ -79,7 +79,7 @@ export const AcceptOrderLead = async (req, res) => {
       orders: orders,
     });
 
-    const data = await OrderLead.findByIdAndUpdate(
+    const data = await Lead.findByIdAndUpdate(
       { _id: id },
       { status: "pending", drivers: order.drivers }
     );
