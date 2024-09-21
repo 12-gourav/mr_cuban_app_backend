@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     accountOtp: {
-      type: Number,
+      type: String,
       unique: true,
     },
     otp:{

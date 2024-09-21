@@ -156,7 +156,7 @@ export const Verify_Password_for_user = async (req, res) => {
 
     const data = await User.findByIdAndUpdate(
       { _id: user?._id },
-      { password: password, otp: null, otp_expiary: null }
+      { password: password, otp: null, otpExpiary: null }
     );
 
     res.status(200).json({ msg: "Your Password Change Successfully", data });
