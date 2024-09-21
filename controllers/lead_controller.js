@@ -1,4 +1,3 @@
-
 import { DriverOrder } from "../models/driverOrder.js";
 import { Lead } from "../models/lead.js";
 import { CustomerOrder } from "../models/order.js";
@@ -17,11 +16,17 @@ export const CreateLead = async (req, res) => {
       otp,
     } = req.body;
 
-    const pickupdate = new Date(pickdate).toDateString();
-    const pickuptime = new Date(pickdate)?.toTimeString();
+    const pickupdate = new Date(pickdate).toLocaleDateString();
+    const pickuptime = new Date(pickdate)?.toLocaleTimeString();
 
-    const returnDate = dropdate !== "" ? new Date(dropdate).toDateString() : "";
-    const returnTime = dropdate !== "" ? new Date(dropdate).toTimeString() : "";
+    const returnDate =
+      dropdate !== "" ? new Date(dropdate).toLocaleDateString() : "";
+    const returnTime =
+      dropdate !== "" ? new Date(dropdate).toLocaleString() : "";
+
+    const leadCheck = await Lead.findOneAndDelete({
+      $and: [{ customer_id: id }, { status: "pending" }],
+    });
 
     const data = await Lead.create({
       pickup_address: pickup,
@@ -88,7 +93,7 @@ export const AcceptOrderLead = async (req, res) => {
   }
 };
 
-export const DisplayCustomerLead = async (req,res) => {
+export const DisplayCustomerLead = async (req, res) => {
   try {
     const { id } = req.query;
 
@@ -150,15 +155,14 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
   }
 };
 
-
-
 export const CancelRideByUser = async (req, res) => {
-    try {
-      const { id } = req.query;
-      const data = await Lead.findByIdAndDelete({ _id: id });
-      return res.status(400).json({ msg: "Order Delete Successfully", data });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({ msg: error });
-    }
-  };
+  try {
+    const { id } = req.query;
+    console.log(id)
+    const data = await Lead.findByIdAndDelete({ _id: id });
+    return res.status(400).json({ msg: "Order Delete Successfully", data });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ msg: error });
+  }
+};
