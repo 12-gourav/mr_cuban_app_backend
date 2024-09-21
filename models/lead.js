@@ -5,11 +5,11 @@ const leadSchema = new mongoose.Schema(
     customer_id: String,
     pickup_address: String,
     drop_address: String,
-    pickup_date: Date,
+    pickup_date: String,
     pickup_time: String,
     return_pickup_address: String,
     return_drop_address: String,
-    return_date: Date,
+    return_date: String,
     return_time: String,
     distance: Number,
     trip_type: String,
@@ -18,7 +18,7 @@ const leadSchema = new mongoose.Schema(
       default: "pending",
     },
     drivers: [],
-    otp: Number,
+    otp: String,
   },
   { timestamps: true }
 );
