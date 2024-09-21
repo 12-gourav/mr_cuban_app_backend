@@ -5,12 +5,12 @@ export const OTP_Generator = async ()=> {
     let isUnique = false;
   
     do {
-      otp = Math.floor(1000 + Math.random() * 9000).toString();
-      const existingUser = await User.findOne({ accountOtp: otp });
+      otp = Math.floor(1000 + Math.random() * 9000);
+      const existingUser = await User.findOne({ accountOtp: String(otp) });
       if (!existingUser) {
         isUnique = true;
       }
     } while (!isUnique);
   
-    return otp;
+    return String(otp);
   }
