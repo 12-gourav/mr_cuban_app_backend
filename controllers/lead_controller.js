@@ -22,7 +22,7 @@ export const CreateLead = async (req, res) => {
     const returnDate =
       dropdate !== "" ? new Date(dropdate).toLocaleDateString() : "";
     const returnTime =
-      dropdate !== "" ? new Date(dropdate).toTimeString() : "";
+      dropdate !== "" ? new Date(dropdate).toLocaleTimeString() : "";
 
     const leadCheck = await Lead.findOneAndDelete({
       $and: [{ customer_id: id }, { status: "pending" }],
@@ -124,6 +124,10 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
     const lead = await Lead.findById({ _id: orderId });
     const driver = lead?.drivers?.find((f) => f.id === driverId);
 
+    if(!driver) return res.status(400).json({msg:"Driver Not Found or Exist"})
+
+    
+
     // Generate order for driver
 
     await DriverOrder.create({
@@ -135,7 +139,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance4: lead?.return_drop_address,
       date1: lead?.pickup_date + " | "+lead?.pickup_time,
       date2: lead?.return_date +" | "+ lead?.return_time,
-      price: driver[0].price,
+      price: driver?.price,
       driverId: driverId,
       status: "accept",
       paymentStatus: "pending",
@@ -153,7 +157,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance4: lead?.return_drop_address,
       date1: lead?.pickup_date + " | "+lead?.pickup_time,
       date2: lead?.return_date + " | "+lead?.return_time,
-      price: driver[0]?.price,
+      price: driver?.price,
       status: "accept",
       paymentStatus: "pending",
       type: lead?.trip_type,
