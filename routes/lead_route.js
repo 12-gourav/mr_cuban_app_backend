@@ -3,6 +3,7 @@ import {
   AcceptOrderLead,
   AcceptOrderLeadByCustomer,
   CancelRideByUser,
+  CancelRideByUserAfterAccept,
   CreateLead,
   DisplayCustomerLead,
   DisplayOrderLeads,
@@ -16,6 +17,7 @@ router.get("/leads", DisplayOrderLeads);
 router.post("/accept/lead/driver", AcceptOrderLead);
 router.post("/accept/lead/customer", AcceptOrderLeadByCustomer);
 router.get("/cancel/lead/customer", CancelRideByUser);
+router.get("/cancel/lead/customer/after", CancelRideByUserAfterAccept);
 router.get("/get/lead", DisplayCustomerLead);
 router.get("/get/lead/drivers", DisplayRides);
 

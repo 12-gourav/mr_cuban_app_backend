@@ -130,7 +130,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
 
     // Generate order for driver
 
-    await DriverOrder.create({
+   const driverOrder =  await DriverOrder.create({
       customerId: customerId,
       customerName: name,
       distance1: lead?.pickup_address,
@@ -162,7 +162,8 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       paymentStatus: "pending",
       type: lead?.trip_type,
       otp:lead?.otp,
-      driver:driver
+      driver:driver,
+      driverOrderId:driverOrder?._id
     });
     await Lead.findByIdAndDelete({ _id: orderId });
     return res
@@ -179,6 +180,20 @@ export const CancelRideByUser = async (req, res) => {
     const { id } = req.query;
 
     const data = await Lead.findByIdAndDelete({ _id: id });
+    return res.status(200).json({ msg: "Order Delete Successfully", data: [] });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ msg: error });
+  }
+};
+
+
+export const CancelRideByUserAfterAccept = async (req, res) => {
+  try {
+    const { coi,doi } = req.query;
+
+     await CustomerOrder.findByIdAndUpdate({_id:coi},{status:"cancel",paymentStatus:"unpaid"});
+     await DriverOrder.findByIdAndUpdate({_id:doi},{paymentStatus:"unpaid",status:"cancel"});   
     return res.status(200).json({ msg: "Order Delete Successfully", data: [] });
   } catch (error) {
     console.log(error);
