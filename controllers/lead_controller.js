@@ -22,7 +22,7 @@ export const CreateLead = async (req, res) => {
     const returnDate =
       dropdate !== "" ? new Date(dropdate).toLocaleDateString() : "";
     const returnTime =
-      dropdate !== "" ? new Date(dropdate).toLocaleString() : "";
+      dropdate !== "" ? new Date(dropdate).toTimeString() : "";
 
     const leadCheck = await Lead.findOneAndDelete({
       $and: [{ customer_id: id }, { status: "pending" }],
@@ -65,7 +65,7 @@ export const DisplayOrderLeads = async (req, res) => {
 
 export const AcceptOrderLead = async (req, res) => {
   try {
-    const { price, id, driverId, driverName, model, rating, orders } = req.body;
+    const { price, id, driverId, driverName, model, rating, orders,phone } = req.body;
 
     const order = await Lead.findById({ _id: id }, "drivers");
     console.log(order);
@@ -76,6 +76,7 @@ export const AcceptOrderLead = async (req, res) => {
       model: model,
       rating: rating,
       orders: orders,
+      phone:phone
     });
 
     const data = await Lead.findByIdAndUpdate(
@@ -132,9 +133,9 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance2: lead?.drop_address,
       distance3: lead?.return_pickup_address,
       distance4: lead?.return_drop_address,
-      date1: lead?.pickup_date + lead?.pickup_time,
-      date2: lead?.return_date + lead?.return_time,
-      price: lead.price,
+      date1: lead?.pickup_date + " | "+lead?.pickup_time,
+      date2: lead?.return_date +" | "+ lead?.return_time,
+      price: driver[0].price,
       driverId: driverId,
       status: "accept",
       paymentStatus: "pending",
@@ -150,18 +151,19 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance2: lead?.drop_address,
       distance3: lead?.return_pickup_address,
       distance4: lead?.return_drop_address,
-      date1: lead?.pickup_date + lead?.pickup_time,
-      date2: lead?.return_date + lead?.return_time,
-      price: lead.price,
+      date1: lead?.pickup_date + " | "+lead?.pickup_time,
+      date2: lead?.return_date + " | "+lead?.return_time,
+      price: driver[0]?.price,
       status: "accept",
       paymentStatus: "pending",
       type: lead?.trip_type,
       otp:lead?.otp,
+      driver:driver
     });
     await Lead.findByIdAndDelete({ _id: orderId });
     return res
       .status(200)
-      .json({ msg: "Order Accept by driver  Successfully", data });
+      .json({ msg: "Order Accept by driver  Successfully", data:[] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });
