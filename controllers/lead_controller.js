@@ -134,7 +134,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance4: lead?.return_drop_address,
       date1: lead?.pickup_date + lead?.pickup_time,
       date2: lead?.return_date + lead?.return_time,
-      price: driver.price,
+      price: lead.price,
       driverId: driverId,
       status: "accept",
       paymentStatus: "pending",
