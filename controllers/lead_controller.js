@@ -139,6 +139,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       status: "accept",
       paymentStatus: "pending",
       type: lead?.trip_type,
+      otp:lead?.otp,
     });
 
     // Generate order for customer
@@ -155,6 +156,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       status: "accept",
       paymentStatus: "pending",
       type: lead?.trip_type,
+      otp:lead?.otp,
     });
     await Lead.findByIdAndDelete({ _id: orderId });
     return res

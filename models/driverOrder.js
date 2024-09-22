@@ -15,6 +15,7 @@ const orderSchema = new mongoose.Schema(
     price: String,
     paymentStatus: String,
     type:String,
+    otp:String,
   },
   { timestamps: true }
 );
