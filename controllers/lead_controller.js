@@ -65,11 +65,10 @@ export const DisplayOrderLeads = async (req, res) => {
 
 export const AcceptOrderLead = async (req, res) => {
   try {
-    const { price, id, driverId, driverName, model, rating, orders } =
-      req.body;
+    const { price, id, driverId, driverName, model, rating, orders } = req.body;
 
     const order = await Lead.findById({ _id: id }, "drivers");
-console.log(order)
+    console.log(order);
     await order.drivers.push({
       id: driverId,
       name: driverName,
@@ -102,6 +101,18 @@ export const DisplayCustomerLead = async (req, res) => {
     return res.status(200).json({ msg: "Lead Get Successfully", data });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const DisplayRides = async (req, res) => {
+  try {
+    const { orderId } = req.query;
+    const data = await Lead.findById({ _id: orderId }, "drivers");
+
+    return res.status(200).json({ msg: "Drivers Fetch", data: data });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({ msg: error });
   }
 };
 
@@ -158,9 +169,9 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
 export const CancelRideByUser = async (req, res) => {
   try {
     const { id } = req.query;
-    console.log(id)
+
     const data = await Lead.findByIdAndDelete({ _id: id });
-    return res.status(200).json({ msg: "Order Delete Successfully", data:[] });
+    return res.status(200).json({ msg: "Order Delete Successfully", data: [] });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });

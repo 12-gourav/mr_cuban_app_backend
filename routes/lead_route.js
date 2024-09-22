@@ -6,6 +6,7 @@ import {
   CreateLead,
   DisplayCustomerLead,
   DisplayOrderLeads,
+  DisplayRides,
 } from "../controllers/lead_controller.js";
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.post("/accept/lead/driver", AcceptOrderLead);
 router.get("/accept/lead/customer", AcceptOrderLeadByCustomer);
 router.get("/cancel/lead/customer", CancelRideByUser);
 router.get("/get/lead", DisplayCustomerLead);
+router.get("/get/lead/drivers", DisplayRides);
 
 export default router;
