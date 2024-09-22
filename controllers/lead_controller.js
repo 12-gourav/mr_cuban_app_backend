@@ -118,7 +118,7 @@ export const DisplayRides = async (req, res) => {
 
 export const AcceptOrderLeadByCustomer = async (req, res) => {
   try {
-    const { orderId, driverId, customerId, name } = req.query;
+    const { orderId, driverId, customerId, name } = req.body;
 
     const lead = await Lead.findById({ _id: orderId });
     const driver = lead?.drivers?.find((f) => f.id === driverId);
