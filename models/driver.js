@@ -18,7 +18,14 @@ const driverSchema = new mongoose.Schema({
     verify:{
         type:Boolean,
         default:false
+    },
+    otp:{
+        type:String
+    },
+    otpExpiary:{
+        type:Date
     }
+
 
 },{
     timestamps:true
