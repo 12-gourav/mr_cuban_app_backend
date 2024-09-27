@@ -40,7 +40,7 @@ export const Driver_Register = async (req, res) => {
 
     res
       .status(201)
-      .json({ msg: "Driver Register Successfully", data: data, token });
+      .json({ msg: "Driver Register Successfully", data: data, });
   } catch (error) {
     ErrorMsg(res, error);
   }
