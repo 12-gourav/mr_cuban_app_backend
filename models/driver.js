@@ -13,13 +13,13 @@ const driverSchema = new mongoose.Schema({
         type:String,
         unique:true
     },
-    adharCard:String,
-    panCard:String,
-    adharDoc:[],
-    panDoc:[],
-    dl:[],
-    img:[],
-    address:String
+    dl:String,
+    doc:[],
+    verify:{
+        type:Boolean,
+        default:false
+    }
+
 },{
     timestamps:true
 });
