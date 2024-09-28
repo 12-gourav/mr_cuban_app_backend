@@ -19,6 +19,7 @@ const leadSchema = new mongoose.Schema(
     },
     drivers: [],
     otp: String,
+    seater:Number,
   },
   { timestamps: true }
 );
