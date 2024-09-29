@@ -70,7 +70,7 @@ export const CommentGetByDriver = async (req, res) => {
       .status(200)
       .json({ msg: "Comments fetch Successfully", data: mainData });
 
-    return res.status(200).json({ msg: "Comments fetch Successfully", data });
+    
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
