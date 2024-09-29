@@ -1,6 +1,7 @@
 import { DriverOrder } from "../models/driverOrder.js";
 import { Lead } from "../models/lead.js";
 import { CustomerOrder } from "../models/order.js";
+import { Driver } from "../models/driver.js";
 
 export const CreateLead = async (req, res) => {
   try {
@@ -65,7 +66,8 @@ export const DisplayOrderLeads = async (req, res) => {
 
 export const AcceptOrderLead = async (req, res) => {
   try {
-    const { price, id, driverId, driverName, model, rating, orders,phone } = req.body;
+    const { price, id, driverId, driverName, model, rating, orders, phone } =
+      req.body;
 
     const order = await Lead.findById({ _id: id }, "drivers");
     console.log(order);
@@ -75,8 +77,8 @@ export const AcceptOrderLead = async (req, res) => {
       price: price,
       model: model,
       rating: rating,
-      orders: orders,// orders length
-      phone:phone
+      orders: orders, // orders length
+      phone: phone,
     });
 
     const data = await Lead.findByIdAndUpdate(
@@ -124,27 +126,27 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
     const lead = await Lead.findById({ _id: orderId });
     const driver = lead?.drivers?.find((f) => f.id === driverId);
 
-    if(!driver) return res.status(400).json({msg:"Driver Not Found or Exist"})
-
-    
+    if (!driver)
+      return res.status(400).json({ msg: "Driver Not Found or Exist" });
 
     // Generate order for driver
 
-   const driverOrder =  await DriverOrder.create({
+    const driverOrder = await DriverOrder.create({
       customerId: customerId,
       customerName: name,
       distance1: lead?.pickup_address,
       distance2: lead?.drop_address,
       distance3: lead?.return_pickup_address,
       distance4: lead?.return_drop_address,
-      date1: lead?.pickup_date + " | "+lead?.pickup_time,
-      date2: lead?.return_date +" | "+ lead?.return_time,
+      date1: lead?.pickup_date + " | " + lead?.pickup_time,
+      date2: lead?.return_date + " | " + lead?.return_time,
       price: driver?.price,
       driverId: driverId,
       status: "accept",
       paymentStatus: "pending",
       type: lead?.trip_type,
-      otp:lead?.otp,
+      otp: lead?.otp,
+      carDetails: driver[0],
     });
 
     // Generate order for customer
@@ -155,20 +157,23 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance2: lead?.drop_address,
       distance3: lead?.return_pickup_address,
       distance4: lead?.return_drop_address,
-      date1: lead?.pickup_date + " | "+lead?.pickup_time,
-      date2: lead?.return_date + " | "+lead?.return_time,
+      date1: lead?.pickup_date + " | " + lead?.pickup_time,
+      date2: lead?.return_date + " | " + lead?.return_time,
       price: driver?.price,
       status: "accept",
       paymentStatus: "pending",
       type: lead?.trip_type,
-      otp:lead?.otp,
-      driver:driver,
-      driverOrderId:driverOrder?._id
+      otp: lead?.otp,
+      driver: driver,
+      driverOrderId: driverOrder?._id,
     });
     await Lead.findByIdAndDelete({ _id: orderId });
+    const total = await DriverOrder.countDocuments({ _id: driverId });
+    await Driver.findByIdAndUpdate({ driverId: driverId }, { orders: total });
+
     return res
       .status(200)
-      .json({ msg: "Order Accept by driver  Successfully", data:[] });
+      .json({ msg: "Order Accept by driver  Successfully", data: [] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });
@@ -187,13 +192,18 @@ export const CancelRideByUser = async (req, res) => {
   }
 };
 
-
 export const CancelRideByUserAfterAccept = async (req, res) => {
   try {
-    const { coi,doi } = req.query;
+    const { coi, doi } = req.query;
 
-     await CustomerOrder.findByIdAndUpdate({_id:coi},{status:"cancel",paymentStatus:"unpaid"});
-     await DriverOrder.findByIdAndUpdate({_id:doi},{paymentStatus:"unpaid",status:"cancel"});   
+    await CustomerOrder.findByIdAndUpdate(
+      { _id: coi },
+      { status: "cancel", paymentStatus: "unpaid" }
+    );
+    await DriverOrder.findByIdAndUpdate(
+      { _id: doi },
+      { paymentStatus: "unpaid", status: "cancel" }
+    );
     return res.status(200).json({ msg: "Order Delete Successfully", data: [] });
   } catch (error) {
     console.log(error);

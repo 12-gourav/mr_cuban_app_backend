@@ -11,6 +11,8 @@ import DistanceRoutes from "./routes/distance_route.js";
 import LeadRoutes from "./routes/lead_route.js";
 import OrderRoutes from "./routes/order_routes.js";
 import DriverRoutes from "./routes/driver_routes.js";
+import RideRoutes from "./routes/rides_route.js";
+import RatingRoutes from "./routes/rating_route.js";
 
 config({path:"./config/.env"});
 const app  = express();
@@ -40,6 +42,8 @@ app.use("/api/v1",DistanceRoutes);
 app.use("/api/v1",OrderRoutes);
 app.use("/api/v1",LeadRoutes);
 app.use("/api/v1",DriverRoutes);
+app.use("/api/v1",RideRoutes);
+app.use("/api/v1",RatingRoutes);
 
 
 app.get("/",(req,res)=>{
