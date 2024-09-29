@@ -1,6 +1,7 @@
 import { Driver } from "../models/driver.js";
 import { Notification } from "../models/notification.js";
 import { Rating } from "../models/rating.js";
+import { User } from "../models/user.js";
 
 //comment create by user
 export const createComment = async (req, res) => {
@@ -57,8 +58,17 @@ export const CommentGetByDriver = async (req, res) => {
   try {
     const { id } = req.query;
     const data = await Rating.find({ driverId: id })
-      .limit(30)
+      .limit(20)
       .sort({ createdAt: -1 });
+    const mainData = [];
+    for (let i = 0; i < data?.length; i++) {
+      const user = await User.findById({ _id: data[i]?.customerId }, "name");
+      mainData.push({ user: user, rate: data[i] });
+    }
+
+    return res
+      .status(200)
+      .json({ msg: "Comments fetch Successfully", data: mainData });
 
     return res.status(200).json({ msg: "Comments fetch Successfully", data });
   } catch (error) {
@@ -73,8 +83,15 @@ export const CommentGetByDriver2 = async (req, res) => {
     const data = await Rating.find({ driverId: id })
       .limit(5)
       .sort({ createdAt: -1 });
+    const mainData = [];
+    for (let i = 0; i < data?.length; i++) {
+      const user = await User.findById({ _id: data[i]?.customerId }, "name");
+      mainData.push({ user: user, rate: data[i] });
+    }
 
-    return res.status(200).json({ msg: "Comments fetch Successfully", data });
+    return res
+      .status(200)
+      .json({ msg: "Comments fetch Successfully", data: mainData });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
