@@ -1,4 +1,5 @@
 import { Driver } from "../models/driver.js";
+import { Notification } from "../models/notification.js";
 import { Rating } from "../models/rating.js";
 
 //comment create by user
@@ -21,6 +22,12 @@ export const createComment = async (req, res) => {
     const finalRating = Math.floor(Number(temp / rateNumber?.length)).toFixed(
       0
     );
+
+    await Notification.create({
+      title: "Rating Notification",
+      driverId: driverId,
+      message: "New comment added to your account",
+    });
 
     await Driver.findByIdAndUpdate({ _id: driverId }, { ratings: finalRating });
     return res.status(201).json({ msg: "Rating Saved Successfully", data });
@@ -45,19 +52,31 @@ export const CommentGetByCustomer = async (req, res) => {
   }
 };
 
-
 //comments get by driver
 export const CommentGetByDriver = async (req, res) => {
-    try {
-      const { id } = req.query;
-      const data = await Rating.find({ driverId: id })
-        .limit(30)
-        .sort({ createdAt: -1 });
-  
-      return res.status(200).json({ msg: "Comments fetch Successfully", data });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({ msg: error });
-    }
-  };
+  try {
+    const { id } = req.query;
+    const data = await Rating.find({ driverId: id })
+      .limit(30)
+      .sort({ createdAt: -1 });
 
+    return res.status(200).json({ msg: "Comments fetch Successfully", data });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ msg: error });
+  }
+};
+
+export const CommentGetByDriver2 = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const data = await Rating.find({ driverId: id })
+      .limit(5)
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ msg: "Comments fetch Successfully", data });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ msg: error });
+  }
+};

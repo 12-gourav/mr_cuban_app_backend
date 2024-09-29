@@ -2,6 +2,7 @@ import { DriverOrder } from "../models/driverOrder.js";
 import { Lead } from "../models/lead.js";
 import { CustomerOrder } from "../models/order.js";
 import { Driver } from "../models/driver.js";
+import { Notification } from "../models/notification.js";
 
 export const CreateLead = async (req, res) => {
   try {
@@ -15,6 +16,7 @@ export const CreateLead = async (req, res) => {
       dropdate,
       id,
       otp,
+      seat,
     } = req.body;
 
     const pickupdate = new Date(pickdate).toLocaleDateString();
@@ -42,6 +44,7 @@ export const CreateLead = async (req, res) => {
       otp: otp,
       status: "pending",
       trip_type: type,
+      seater:seat
     });
 
     return res.status(200).json({ msg: "Lead Generate Successfully", data });
@@ -167,13 +170,18 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       driver: driver,
       driverOrderId: driverOrder?._id,
     });
+    await Notification.create({
+      title: "Ride Confirmation",
+      driverId: driverId,
+      message: `Your ride scheduled for ${lead?.pickup_date} has been successfully confirmed by the customer.`,
+    });
     await Lead.findByIdAndDelete({ _id: orderId });
     const total = await DriverOrder.countDocuments({ _id: driverId });
     await Driver.findByIdAndUpdate({ driverId: driverId }, { orders: total });
 
     return res
       .status(200)
-      .json({ msg: "Order Accept by driver  Successfully", data: [] });
+      .json({ msg: "Order Accept by Customer Successfully", data: [] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });
@@ -196,7 +204,7 @@ export const CancelRideByUserAfterAccept = async (req, res) => {
   try {
     const { coi, doi } = req.query;
 
-    await CustomerOrder.findByIdAndUpdate(
+   const data =  await CustomerOrder.findByIdAndUpdate(
       { _id: coi },
       { status: "cancel", paymentStatus: "unpaid" }
     );
@@ -204,6 +212,13 @@ export const CancelRideByUserAfterAccept = async (req, res) => {
       { _id: doi },
       { paymentStatus: "unpaid", status: "cancel" }
     );
+
+    await Notification.create({
+      title: "Ride Cancellation",
+      driverId: driverId,
+      message: `Your ride scheduled for ${data?.date1} has been cancelled by the customer.`,
+    });
+    
     return res.status(200).json({ msg: "Order Delete Successfully", data: [] });
   } catch (error) {
     console.log(error);
