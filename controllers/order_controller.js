@@ -77,12 +77,12 @@ export const DriverUpcommingOrder = async (req, res) => {
     const skip = (pageNo - 1) * pageSize;
 
     const total = await DriverOrder.countDocuments({
-      $and: [{ driverId: id }, { status: "accept" }],
+      $and: [{ driverId: id }, { status: "Accept" }],
     });
 
     const data = await DriverOrder.find(
       {
-        $and: [{ driverId: id }, { status: "accept" }],
+        $and: [{ driverId: id }, { status: "Accept" }],
       },
       "-otp"
     )
@@ -123,7 +123,7 @@ export const DriverHistoryOrder = async (req, res) => {
       $and: [
         { customerId: id },
         {
-          $or: [{ status: "cancel" }, { status: "complete" }],
+          $or: [{ status: "Cancel" }, { status: "Complete" }],
         },
       ],
     })

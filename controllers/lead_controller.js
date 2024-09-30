@@ -246,7 +246,7 @@ export const StartRide = async (req, res) => {
     { status: "Start" }
     );  
 
-    return res.status(200).json({ msg: "Order Start Successfully" });
+    return res.status(200).json({ msg: "Order Start Successfully",data:[] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });
@@ -268,10 +268,10 @@ export const FinishRide = async (req, res) => {
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
-      { status: "Complete" }
+      { status: "Complete",paymentStatus:"Complete" }
     );
 
-    return res.status(200).json({ msg: "Order Start Successfully" });
+    return res.status(200).json({ msg: "Order Start Successfully",data:[] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });
