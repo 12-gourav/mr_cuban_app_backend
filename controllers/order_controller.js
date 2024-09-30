@@ -90,7 +90,7 @@ export const DriverUpcommingOrder = async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
-    const userDetails = await User.findById({ _id: data?.customerId }, "phone");
+    const userDetails = await User.findById({ _id: data[0]?.customerId }, "phone");
     const mainData = { data: data, user: userDetails, total: total };
 
     return res
@@ -131,7 +131,7 @@ export const DriverHistoryOrder = async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
-    const userDetails = await User.findById({ _id: data?.customerId }, "phone");
+    const userDetails = await User.findById({ _id: data[0]?.customerId }, "phone");
     const mainData = { data: data, user: userDetails, total: total };
 
     return res
