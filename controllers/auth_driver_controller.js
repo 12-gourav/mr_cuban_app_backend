@@ -9,6 +9,7 @@ import { sendMails } from "../utils/SendMails.js";
 import { Driver } from "../models/driver.js";
 
 import cloudinary from "cloudinary";
+import { DriverOrder } from "../models/driverOrder.js";
 
 export const Driver_Register = async (req, res) => {
   try {
@@ -38,9 +39,7 @@ export const Driver_Register = async (req, res) => {
 
     await sendMails(data?.email, subject, message);
 
-    res
-      .status(201)
-      .json({ msg: "Driver Register Successfully", data: data, });
+    res.status(201).json({ msg: "Driver Register Successfully", data: data });
   } catch (error) {
     ErrorMsg(res, error);
   }
@@ -143,8 +142,6 @@ export const UploadDocs = async (req, res) => {
   }
 };
 
-
-
 export const Driver_Login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -181,8 +178,36 @@ export const Driver_Login = async (req, res) => {
 export const LoadUser = async (req, res) => {
   try {
     const data = await Driver.findOne({ _id: req.id });
+    // Get the start and end of the current month
+    const startOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0
+    );
 
-    return res.status(200).json({ msg: "Driver Fetch", data });
+    // Find orders within the current month
+    const orders = await DriverOrder.find(
+      {
+        driverId: req.id,
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+      },
+      "price"
+    );
+
+    // Calculate the total amount using reduce
+    const totalAmount = orders.reduce(
+      (sum, order) => sum + Number(order.price),
+      0
+    );
+
+    return res
+      .status(200)
+      .json({ msg: "Driver Fetch", data, total: totalAmount });
   } catch (error) {
     ErrorMsg(res, error);
   }

@@ -4,7 +4,6 @@ import { ErrorMsg } from "../utils/Error.js";
 import JWT from "jsonwebtoken";
 import { sendMails } from "../utils/SendMails.js";
 import { OTP_Generator } from "../utils/util.js";
-import { DriverOrder } from "../models/driverOrder.js";
 
 export const User_Register = async (req, res) => {
   try {
@@ -82,22 +81,10 @@ export const User_Login = async (req, res) => {
 export const LoadUser = async (req, res) => {
   try {
     const data = await User.findOne({ _id: req.id });
-    const currentMonth = new Date().getMonth();
-    // Find orders within the current month
-    const orders = await DriverOrder.find({
-      driverId: req.id,
-      createdAt: { $gte: startOfMonth, $lte: endOfMonth }
-    }, "price");
-
-    let totalAmount = 0;
-
-    for (let i = 0; i < order?.length; i++) {
-      totalAmount = totalAmount + Number(order[i]?.price);
-    }
 
     return res
       .status(200)
-      .json({ msg: "User Fetch", data, total: totalAmount });
+      .json({ msg: "User Fetch", data});
   } catch (error) {
     ErrorMsg(res, error);
   }
