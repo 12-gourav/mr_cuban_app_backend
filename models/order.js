@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema(
     otp:String,
     driver:[],
     driverOrderId:String,
+    seater:Number
     
   },
   { timestamps: true }

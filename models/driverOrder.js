@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema(
     type:String,
     otp:String,
     carDetails:Object,
+    seater:Number,
   },
   { timestamps: true }
 );

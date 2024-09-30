@@ -3,6 +3,9 @@ import { Lead } from "../models/lead.js";
 import { CustomerOrder } from "../models/order.js";
 import { Driver } from "../models/driver.js";
 import { Notification } from "../models/notification.js";
+import mongoose from "mongoose";
+
+
 
 export const CreateLead = async (req, res) => {
   try {
@@ -124,10 +127,10 @@ export const DisplayRides = async (req, res) => {
 
 export const AcceptOrderLeadByCustomer = async (req, res) => {
   try {
-    const { orderId, driverId, customerId, name } = req.body;
-
-    const lead = await Lead.findById({ _id: orderId });
-    const driver = lead?.drivers?.find((f) => f.id === driverId);
+    const { orderId, driverId, customerId, name } = req.body; 
+    const lead = await Lead.findOne({_id:orderId});
+    const driver = lead?.drivers?.find((f) => f?.id === driverId);
+    
 
     if (!driver)
       return res.status(400).json({ msg: "Driver Not Found or Exist" });
@@ -150,6 +153,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       type: lead?.trip_type,
       otp: lead?.otp,
       carDetails: driver[0],
+      seater:lead?.seater
     });
 
     // Generate order for customer
@@ -169,6 +173,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       otp: lead?.otp,
       driver: driver,
       driverOrderId: driverOrder?._id,
+      seater:lead?.seater
     });
     await Notification.create({
       title: "Ride Confirmation",
@@ -177,7 +182,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
     });
     await Lead.findByIdAndDelete({ _id: orderId });
     const total = await DriverOrder.countDocuments({ _id: driverId });
-    await Driver.findByIdAndUpdate({ driverId: driverId }, { orders: total });
+    await Driver.findByIdAndUpdate({ _id:driverId  }, { orders: total });
 
     return res
       .status(200)
@@ -208,14 +213,14 @@ export const CancelRideByUserAfterAccept = async (req, res) => {
       { _id: coi },
       { status: "cancel", paymentStatus: "unpaid" }
     );
-    await DriverOrder.findByIdAndUpdate(
+   const data2 =  await DriverOrder.findByIdAndUpdate(
       { _id: doi },
       { paymentStatus: "unpaid", status: "cancel" }
     );
 
     await Notification.create({
       title: "Ride Cancellation",
-      driverId: driverId,
+      driverId: data2?.driverId,
       message: `Your ride scheduled for ${data?.date1} has been cancelled by the customer.`,
     });
     
