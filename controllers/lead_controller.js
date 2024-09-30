@@ -3,7 +3,7 @@ import { Lead } from "../models/lead.js";
 import { CustomerOrder } from "../models/order.js";
 import { Driver } from "../models/driver.js";
 import { Notification } from "../models/notification.js";
-import mongoose from "mongoose";
+import {User} from "../models/user.js"
 
 export const CreateLead = async (req, res) => {
   try {
@@ -233,8 +233,9 @@ export const StartRide = async (req, res) => {
     const { id, otp } = req.query;
 
     const data = await DriverOrder.findById({ _id: id }, "otp customerId");
+    const user = await User.findById({_id:data?.customerId},'accountOtp')
 
-    if (data?.otp !== String(otp)) {
+    if (user?.accountOtp !== String(otp)) {
       return res.status(400).json({ msg: "Invalid OTP" });
     }
 
@@ -242,8 +243,8 @@ export const StartRide = async (req, res) => {
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
-      { status: "Start" }
-    );
+    { status: "Start" }
+    );  
 
     return res.status(200).json({ msg: "Order Start Successfully" });
   } catch (error) {
