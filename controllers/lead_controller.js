@@ -239,7 +239,7 @@ export const StartRide = async (req, res) => {
       return res.status(400).json({ msg: "Invalid OTP" });
     }
 
-    await DriverOrder.findByIdAndUpdate({ _id: id }, { status: "Start" });
+    await DriverOrder.findByIdAndUpdate({ _id: id }, { status: "start" });
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
@@ -264,11 +264,11 @@ export const FinishRide = async (req, res) => {
       return res.status(400).json({ msg: "Something went wrong" });
     }
 
-    await DriverOrder.findByIdAndUpdate({ _id: id }, { status: "Complete" });
+    await DriverOrder.findByIdAndUpdate({ _id: id }, { status: "complete" });
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
-      { status: "Complete",paymentStatus:"Complete" }
+      { status: "complete",paymentStatus:"complete" }
     );
 
     return res.status(200).json({ msg: "Order Start Successfully",data:[] });

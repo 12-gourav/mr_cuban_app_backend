@@ -71,27 +71,39 @@ export const customerHistoryOrder = async (req, res) => {
 export const DriverUpcommingOrder = async (req, res) => {
   try {
     const { page, id, limit } = req.query;
-
+    console.log(id);
     const pageNo = parseInt(page) || 1;
     const pageSize = parseInt(limit) || 10;
     const skip = (pageNo - 1) * pageSize;
 
     const total = await DriverOrder.countDocuments({
-      $and: [{ driverId: id }, { status: "Accept" }],
+      $and: [
+        { driverId: id },
+        { $or: [{ status: "start" }, { status: "accept" }] },
+      ],
     });
 
     const data = await DriverOrder.find(
       {
-        $and: [{ driverId: id }, { status: "Accept" }],
+        $and: [
+          { driverId: id },
+          { $or: [{ status: "start" }, { status: "accept" }] },
+        ],
       },
       "-otp"
     )
       .skip(skip)
       .limit(pageSize)
       .sort({ createdAt: -1 });
+    let userDetails;
+    if (data?.length > 0) {
+      userDetails = await User.findById(
+        { _id: data[0]?.customerId || "" },
+        "phone"
+      );
+    }
 
-    const userDetails = await User.findById({ _id: data[0]?.customerId }, "phone");
-    const mainData = { data: data, user: userDetails, total: total };
+    const mainData = { data: data, user: userDetails || {}, total: total };
 
     return res
       .status(200)
@@ -114,7 +126,7 @@ export const DriverHistoryOrder = async (req, res) => {
       $and: [
         { customerId: id },
         {
-          $or: [{ status: "cancel" }, { status: "complete" }],
+          $or: [{ status: "cancel" }, { status: "complete" },],
         },
       ],
     });
@@ -123,7 +135,7 @@ export const DriverHistoryOrder = async (req, res) => {
       $and: [
         { customerId: id },
         {
-          $or: [{ status: "Cancel" }, { status: "Complete" }],
+          $or: [{ status: "cancel" }, { status: "complete" }],
         },
       ],
     })
@@ -131,7 +143,10 @@ export const DriverHistoryOrder = async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
-    const userDetails = await User.findById({ _id: data[0]?.customerId }, "phone");
+    const userDetails = await User.findById(
+      { _id: data[0]?.customerId },
+      "phone"
+    );
     const mainData = { data: data, user: userDetails, total: total };
 
     return res
