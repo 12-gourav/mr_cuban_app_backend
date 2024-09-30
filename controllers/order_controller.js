@@ -1,5 +1,6 @@
 import { DriverOrder } from "../models/driverOrder.js";
 import { CustomerOrder } from "../models/order.js";
+import { User } from "../models/user.js";
 
 export const customerUpcommingOrder = async (req, res) => {
   try {
@@ -67,10 +68,6 @@ export const customerHistoryOrder = async (req, res) => {
   }
 };
 
-
-
-
-
 export const DriverUpcommingOrder = async (req, res) => {
   try {
     const { page, id, limit } = req.query;
@@ -83,16 +80,22 @@ export const DriverUpcommingOrder = async (req, res) => {
       $and: [{ driverId: id }, { status: "accept" }],
     });
 
-    const data = await DriverOrder.find({
-      $and: [{ driverId: id }, { status: "accept" }],
-    })
+    const data = await DriverOrder.find(
+      {
+        $and: [{ driverId: id }, { status: "accept" }],
+      },
+      "-otp"
+    )
       .skip(skip)
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
+    const userDetails = await User.findById({ _id: data?.customerId }, "phone");
+    const mainData = { data: data, user: userDetails, total: total };
+
     return res
       .status(200)
-      .json({ msg: "Order Fetch Successfully", data, total });
+      .json({ msg: "Order Fetch Successfully", data: mainData });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
@@ -128,9 +131,12 @@ export const DriverHistoryOrder = async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
+    const userDetails = await User.findById({ _id: data?.customerId }, "phone");
+    const mainData = { data: data, user: userDetails, total: total };
+
     return res
       .status(200)
-      .json({ msg: "Order Fetch Successfully", data, total });
+      .json({ msg: "Order Fetch Successfully", data: mainData });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
