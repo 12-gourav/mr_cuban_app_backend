@@ -3,7 +3,8 @@ import { Lead } from "../models/lead.js";
 import { CustomerOrder } from "../models/order.js";
 import { Driver } from "../models/driver.js";
 import { Notification } from "../models/notification.js";
-import {User} from "../models/user.js"
+import { User } from "../models/user.js";
+import { SendSingularNotification } from "./token_controller.js";
 
 export const CreateLead = async (req, res) => {
   try {
@@ -233,7 +234,7 @@ export const StartRide = async (req, res) => {
     const { id, otp } = req.query;
 
     const data = await DriverOrder.findById({ _id: id }, "otp customerId");
-    const user = await User.findById({_id:data?.customerId},'accountOtp')
+    const user = await User.findById({ _id: data?.customerId }, "accountOtp");
 
     if (user?.accountOtp !== String(otp)) {
       return res.status(400).json({ msg: "Invalid OTP" });
@@ -243,16 +244,22 @@ export const StartRide = async (req, res) => {
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
-    { status: "Start" }
-    );  
+      { status: "Start" }
+    );
 
-    return res.status(200).json({ msg: "Order Start Successfully",data:[] });
+    const notice = await SendSingularNotification(
+      data?.driverId,
+      "Ride Accepted by Customer",
+      "The customer has successfully accepted the ride. Please proceed with the service."
+    );
+    console.log(notice);
+
+    return res.status(200).json({ msg: "Order Start Successfully", data: [] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });
   }
 };
-
 
 export const FinishRide = async (req, res) => {
   try {
@@ -260,7 +267,7 @@ export const FinishRide = async (req, res) => {
 
     const data = await DriverOrder.findById({ _id: id }, "status");
 
-    if (data?.status==="Start") {
+    if (data?.status === "Start") {
       return res.status(400).json({ msg: "Something went wrong" });
     }
 
@@ -268,10 +275,10 @@ export const FinishRide = async (req, res) => {
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
-      { status: "complete",paymentStatus:"complete" }
+      { status: "complete", paymentStatus: "complete" }
     );
 
-    return res.status(200).json({ msg: "Order Start Successfully",data:[] });
+    return res.status(200).json({ msg: "Order Start Successfully", data: [] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });

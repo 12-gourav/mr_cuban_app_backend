@@ -11,7 +11,10 @@ export const customerUpcommingOrder = async (req, res) => {
     const skip = (pageNo - 1) * pageSize;
 
     const total = await CustomerOrder.countDocuments({
-      $and: [{ customerId: id }, {$or:[{ status: "accept" },{status:"start"}]}],
+      $and: [
+        { customerId: id },
+        { $or: [{ status: "accept" }, { status: "start" }] },
+      ],
     });
 
     const data = await CustomerOrder.find({
@@ -71,7 +74,6 @@ export const customerHistoryOrder = async (req, res) => {
 export const DriverUpcommingOrder = async (req, res) => {
   try {
     const { page, id, limit } = req.query;
-    console.log(id);
     const pageNo = parseInt(page) || 1;
     const pageSize = parseInt(limit) || 10;
     const skip = (pageNo - 1) * pageSize;
@@ -95,15 +97,18 @@ export const DriverUpcommingOrder = async (req, res) => {
       .skip(skip)
       .limit(pageSize)
       .sort({ createdAt: -1 });
-    let userDetails;
-    if (data?.length > 0) {
-      userDetails = await User.findById(
-        { _id: data[0]?.customerId || "" },
-        "phone"
+    let userDetails = [];
+
+    if (data.length > 0) {
+      // Fetch user details for all orders in parallel
+      userDetails = await Promise.all(
+        data.map((order) =>
+          User.findById(order.customerId || "", "phone").lean().exec()
+        )
       );
     }
 
-    const mainData = { data: data, user: userDetails || {}, total: total };
+    const mainData = { data: data, user: userDetails, total: total };
 
     return res
       .status(200)
@@ -126,7 +131,7 @@ export const DriverHistoryOrder = async (req, res) => {
       $and: [
         { driverId: id },
         {
-          $or: [{ status: "cancel" }, { status: "complete" },],
+          $or: [{ status: "cancel" }, { status: "complete" }],
         },
       ],
     });
@@ -143,10 +148,17 @@ export const DriverHistoryOrder = async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
-    const userDetails = await User.findById(
-      { _id: data[0]?.customerId },
-      "phone"
-    );
+      let userDetails = [];
+
+      if (data.length > 0) {
+        // Fetch user details for all orders in parallel
+        userDetails = await Promise.all(
+          data.map((order) =>
+            User.findById(order.customerId || "", "phone").lean().exec()
+          )
+        );
+      }
+  
     const mainData = { data: data, user: userDetails, total: total };
 
     return res

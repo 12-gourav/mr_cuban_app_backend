@@ -29,13 +29,15 @@ export const SendNotification = async (req, res) => {
 
     let expo = new Expo();
 
-    const tokens = await Tokens.find({}, 'token');
+    const tokens = await Tokens.find({}, "token");
     let messages = [];
 
     for (let pushToken of tokens) {
       // Check if the token is a valid Expo push token
       if (!Expo.isExpoPushToken(pushToken.token)) {
-        console.error(`Push token ${pushToken.token} is not a valid Expo push token`);
+        console.error(
+          `Push token ${pushToken.token} is not a valid Expo push token`
+        );
         continue;
       }
       messages.push({
@@ -43,7 +45,7 @@ export const SendNotification = async (req, res) => {
         sound: "default",
         title: title,
         body: message,
-        data: { someData: "goes here" }, 
+        data: { someData: "goes here" },
       });
     }
 
@@ -63,6 +65,52 @@ export const SendNotification = async (req, res) => {
     res.status(200).send("Notifications sent");
   } catch (error) {
     console.log(error);
-    res.status(400).json({ msg: error.message || "Error sending notifications" });
+    res
+      .status(400)
+      .json({ msg: error.message || "Error sending notifications" });
+  }
+};
+
+export const SendSingularNotification = async (id, title, message) => {
+  try {
+    let expo = new Expo();
+
+    const tokens = await Tokens.find({ partnerId: id }, "token");
+    let messages = [];
+
+    for (let pushToken of tokens) {
+      // Check if the token is a valid Expo push token
+      if (!Expo.isExpoPushToken(pushToken.token)) {
+        console.error(
+          `Push token ${pushToken.token} is not a valid Expo push token`
+        );
+        continue;
+      }
+      messages.push({
+        to: pushToken.token,
+        sound: "default",
+        title: title,
+        body: message,
+        data: { someData: "goes here" },
+      });
+    }
+
+    // Send notifications in chunks
+    let chunks = expo.chunkPushNotifications(messages);
+    (async () => {
+      for (let chunk of chunks) {
+        try {
+          let receipts = await expo.sendPushNotificationsAsync(chunk);
+          console.log(receipts);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    })();
+
+    return "Notification Sent";
+  } catch (error) {
+    console.log(error);
+    return error||"Error sending notifications" ;
   }
 };
