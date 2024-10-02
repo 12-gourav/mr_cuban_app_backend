@@ -45,8 +45,18 @@ export const CommentGetByCustomer = async (req, res) => {
     const data = await Rating.find({ customerId: id })
       .limit(30)
       .sort({ createdAt: -1 });
+    const main = [];
+    for (let i = 0; i < data?.length; i++) {
+      const driverdetails = await Driver.findById(
+        { _id: data[i]?.driverId },
+        "name"
+      );
+      main.push({ rate: data[i], driver: driverdetails });
+    }
 
-    return res.status(200).json({ msg: "Comments Fetch Successfully", data });
+    return res
+      .status(200)
+      .json({ msg: "Comments Fetch Successfully", data: main });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
@@ -69,8 +79,6 @@ export const CommentGetByDriver = async (req, res) => {
     return res
       .status(200)
       .json({ msg: "Comments fetch Successfully", data: mainData });
-
-    
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
