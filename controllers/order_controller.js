@@ -11,7 +11,7 @@ export const customerUpcommingOrder = async (req, res) => {
     const skip = (pageNo - 1) * pageSize;
 
     const total = await CustomerOrder.countDocuments({
-      $and: [{ customerId: id }, { status: "accept" }],
+      $and: [{ customerId: id }, {$or:[{ status: "accept" },{status:"start"}]}],
     });
 
     const data = await CustomerOrder.find({
