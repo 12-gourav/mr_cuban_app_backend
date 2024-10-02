@@ -59,7 +59,7 @@ export const CreateLead = async (req, res) => {
 //Lead display for drivers
 export const DisplayOrderLeads = async (req, res) => {
   try {
-    const data = await Lead.find({ status: "pending" });
+    const data = await Lead.find({ status: "pending" }).sort({createdAt:-1})
     return res.status(200).json({ msg: "Leads Fetch Successfully", data });
   } catch (error) {
     console.log(error);

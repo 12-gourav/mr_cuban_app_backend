@@ -5,8 +5,8 @@ export const sendMails = async (email, subject, html) => {
   const transport = createTransport({
     service: "gmail",
     auth: {
-      user: "amazonego23@gmail.com",
-      pass: "atrsrivjusmxpbhs",
+      user: process.env.GMAIL_ACCOUNT,
+      pass: process.env.GMAIL_PASSKEY,
     },
     port: 465,
     host: "smtp.gmail.com",
@@ -20,5 +20,8 @@ export const sendMails = async (email, subject, html) => {
     html: html,
   });
 
-  // console.log(transport);
+
 };
+
+// atrsrivjusmxpbhs.com
+// "amazonego23@gmail.com"

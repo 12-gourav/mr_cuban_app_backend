@@ -15,7 +15,7 @@ export const getNotifications = async (req, res) => {
       });
   
       // Fetch all the notifications for the driver
-      const data = await Notification.find({ driverId: id });
+      const data = await Notification.find({ driverId: id }).sort({createdAt:-1});
   
       return res.status(200).json({ msg: "Notifications retrieved successfully", data });
     } catch (error) {
