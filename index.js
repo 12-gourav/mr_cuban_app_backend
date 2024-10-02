@@ -13,6 +13,7 @@ import OrderRoutes from "./routes/order_routes.js";
 import DriverRoutes from "./routes/driver_routes.js";
 import RideRoutes from "./routes/rides_route.js";
 import RatingRoutes from "./routes/rating_route.js";
+import TokenRoutes from "./routes/token_route.js"
 
 config({path:"./config/.env"});
 const app  = express();
@@ -44,6 +45,7 @@ app.use("/api/v1",LeadRoutes);
 app.use("/api/v1",DriverRoutes);
 app.use("/api/v1",RideRoutes);
 app.use("/api/v1",RatingRoutes);
+app.use("/api/v1",TokenRoutes);
 
 
 app.get("/",(req,res)=>{
