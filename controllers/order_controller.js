@@ -124,7 +124,7 @@ export const DriverHistoryOrder = async (req, res) => {
 
     const total = await DriverOrder.countDocuments({
       $and: [
-        { customerId: id },
+        { driverId: id },
         {
           $or: [{ status: "cancel" }, { status: "complete" },],
         },
@@ -133,7 +133,7 @@ export const DriverHistoryOrder = async (req, res) => {
 
     const data = await DriverOrder.find({
       $and: [
-        { customerId: id },
+        { driverId: id },
         {
           $or: [{ status: "cancel" }, { status: "complete" }],
         },
