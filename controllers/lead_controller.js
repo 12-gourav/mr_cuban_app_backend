@@ -59,7 +59,7 @@ export const CreateLead = async (req, res) => {
 //Lead display for drivers
 export const DisplayOrderLeads = async (req, res) => {
   try {
-    const data = await Lead.find({ status: "pending" }).sort({createdAt:-1})
+    const data = await Lead.find({ status: "pending" }).sort({ createdAt: -1 });
     return res.status(200).json({ msg: "Leads Fetch Successfully", data });
   } catch (error) {
     console.log(error);
@@ -115,7 +115,7 @@ export const DisplayCustomerLead = async (req, res) => {
 export const DisplayRides = async (req, res) => {
   try {
     const { orderId } = req.query;
-    const data = await Lead.findById({ _id: orderId }, "drivers");
+    const data = await Lead.findById({ _id: orderId }, "drivers")?.sort({createdAt:-1});
 
     return res.status(200).json({ msg: "Drivers Fetch", data: data });
   } catch (error) {
@@ -182,6 +182,13 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
     const total = await DriverOrder.countDocuments({ _id: driverId });
     await Driver.findByIdAndUpdate({ _id: driverId }, { orders: total });
 
+    const notice = await SendSingularNotification(
+      driverId,
+      "Ride Accepted by Customer",
+      "The customer has successfully accepted the ride. Please proceed with the service."
+    );
+
+    console.log(notice);
     return res
       .status(200)
       .json({ msg: "Order Accept by Customer Successfully", data: [] });
@@ -221,6 +228,11 @@ export const CancelRideByUserAfterAccept = async (req, res) => {
       driverId: data2?.driverId,
       message: `Your ride scheduled for ${data?.date1} has been cancelled by the customer.`,
     });
+    const notice = await SendSingularNotification(
+      data2?.driverId,
+      "Ride Cancelled by Customer",
+      "The customer has cancelled the ride. Please check your upcoming rides for updates."
+    );
 
     return res.status(200).json({ msg: "Order Delete Successfully", data: [] });
   } catch (error) {
@@ -246,13 +258,6 @@ export const StartRide = async (req, res) => {
       { driverOrderId: id },
       { status: "start" }
     );
-
-    const notice = await SendSingularNotification(
-      data?.driverId,
-      "Ride Accepted by Customer",
-      "The customer has successfully accepted the ride. Please proceed with the service."
-    );
-    
 
     return res.status(200).json({ msg: "Order Start Successfully", data: [] });
   } catch (error) {
