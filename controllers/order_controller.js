@@ -103,7 +103,7 @@ export const DriverUpcommingOrder = async (req, res) => {
       // Fetch user details for all orders in parallel
       userDetails = await Promise.all(
         data.map((order) =>
-          User.findById(order.customerId || "", "phone").lean().exec()
+          User.findById(order.customerId || "", "phone name").lean().exec()
         )
       );
     }

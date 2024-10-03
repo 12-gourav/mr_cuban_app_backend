@@ -244,7 +244,7 @@ export const StartRide = async (req, res) => {
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
-      { status: "Start" }
+      { status: "start" }
     );
 
     const notice = await SendSingularNotification(
@@ -252,7 +252,7 @@ export const StartRide = async (req, res) => {
       "Ride Accepted by Customer",
       "The customer has successfully accepted the ride. Please proceed with the service."
     );
-    console.log(notice);
+    
 
     return res.status(200).json({ msg: "Order Start Successfully", data: [] });
   } catch (error) {
