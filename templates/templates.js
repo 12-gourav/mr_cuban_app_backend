@@ -23,109 +23,121 @@ export const ForgetmailHTML = (otp) => {
     `;
 };
 
-export const WelcomeHTML = () => {
-  return `
-    <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Welcome to MR Cuban</title>
-      <style>
-      @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
+export const WelcomeHTMLWithOTP = (otp) => {
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verify Your MR Cuban Account</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+  
           body {
-  font-family: "Lato", system-ui;
+            font-family: "Lato", system-ui;
             margin: 0;
-              padding: 0;
-              background-color: #f4f4f4;
+            padding: 0;
+            background-color: #f4f4f4;
           }
           .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background-color: #ffffff;
-              border-radius: 8px;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-              overflow: hidden;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
           }
           .header {
-              background-color: #000000;
-              padding: 20px;
-              text-align: center;
-              color: #ffffff;
+            background-color: #000000;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
           }
           .header h1 {
-              margin: 0;
-              font-size: 24px;
-              color: #ffa500; /* Orange color */
+            margin: 0;
+            font-size: 24px;
+            color: #ffa500; /* Orange color */
           }
           .content {
-              padding: 30px;
-              text-align: center;
+            padding: 30px;
+            text-align: center;
           }
           .content h2 {
-              font-size: 22px;
-              color: #000000;
+            font-size: 22px;
+            color: #000000;
           }
           .content p {
-              font-size: 16px;
-              color: #333333;
-              line-height: 1.5;
+            font-size: 16px;
+            color: #333333;
+            line-height: 1.5;
+          }
+          .otp-code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+            margin: 20px 0;
+            letter-spacing: 4px;
           }
           .cta-button {
-              display: inline-block;
-              background-color: #ffa500; /* Orange color */
-              color: #ffffff;
-              padding: 12px 20px;
-              text-decoration: none;
-              border-radius: 5px;
-              font-size: 16px;
-              margin-top: 20px;
+            display: inline-block;
+            background-color: #ffa500; /* Orange color */
+            color: #ffffff;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 20px;
           }
           .footer {
-              background-color: #000000;
-              padding: 20px;
-              text-align: center;
-              color: #ffffff;
-              font-size: 14px;
+            background-color: #000000;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 14px;
           }
           .footer a {
-              color: #ffa500; /* Orange color */
-              text-decoration: none;
+            color: #ffa500; /* Orange color */
+            text-decoration: none;
           }
           .footer a:hover {
-              text-decoration: underline;
+            text-decoration: underline;
           }
-      </style>
-  </head>
-  <body>
-      <div class="container">
+        </style>
+      </head>
+      <body>
+        <div class="container">
           <div class="header">
-              <h1>Welcome to MR Cuban!</h1>
+            <h1>Verify Your MR Cuban Account!</h1>
           </div>
           <div class="content">
-              <h2>Get Ready for a Seamless Car Booking Experience</h2>
-              <p>
-                  Thank you for joining MR Cuban, the easiest way to book cars in your city. Whether you're commuting or heading out for a weekend trip, MR Cuban has you covered with reliable and convenient car services.
-              </p>
-              <p>
-                  Ready to get started? Just log in to your account and start booking your ride in just a few taps.
-              </p>
-              <a href="https://your-app-url.com" class="cta-button">Book a Ride</a>
+            <h2>Complete Your Registration</h2>
+            <p>
+              Thank you for registering with MR Cuban! To complete your account setup and start booking your rides, please verify your email address by using the OTP below:
+            </p>
+            <div class="otp-code">${otp}</div>
+            <p>
+              Enter this OTP on the account verification page within the app or website to confirm your email address.
+            </p>
+            <p>
+              If you didn't request this, please ignore this email or contact our support team.
+            </p>
+            <a href="https://your-app-url.com" class="cta-button">Verify My Account</a>
           </div>
           <div class="footer">
-              <p>&copy; 2024 MR Cuban. All rights reserved.</p>
-              <p>
-                  <a href="https://www.privacypolicies.com/live/dfe8d4ff-f488-4761-8e2f-21fdc8b3052a">Privacy Policy</a> | 
-                  <a href="https://mrcuban.in/contact">Contact Us</a>
-              </p>
+            <p>&copy; 2024 MR Cuban. All rights reserved.</p>
+            <p>
+              <a href="https://www.privacypolicies.com/live/dfe8d4ff-f488-4761-8e2f-21fdc8b3052a">Privacy Policy</a> | 
+              <a href="https://mrcuban.in/contact">Contact Us</a>
+            </p>
           </div>
-      </div>
-  </body>
-  </html>
+        </div>
+      </body>
+      </html>
     `;
-};
-
+  };
+  
 //--------------------------------------------Driver Templates--------------------------------------------->
 
 export const WelcomeDriverHTML = () => {

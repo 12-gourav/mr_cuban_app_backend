@@ -1,5 +1,9 @@
 import { User } from "../models/user.js";
-import { ForgetmailHTML, WelcomeHTML } from "../templates/templates.js";
+import {
+  ForgetmailHTML,
+  WelcomeHTML,
+  WelcomeHTMLWithOTP,
+} from "../templates/templates.js";
 import { ErrorMsg } from "../utils/Error.js";
 import JWT from "jsonwebtoken";
 import { sendMails } from "../utils/SendMails.js";
@@ -18,6 +22,9 @@ export const User_Register = async (req, res) => {
     // OTP Generate
     const otp = await OTP_Generator();
 
+    const otpv = Math.floor(100000 + Math.random() * 900000);
+    const expiry = new Date(Date.now() + 5 * 60 * 1000);
+
     // User Register
     const data = await User.create({
       name,
@@ -25,36 +32,83 @@ export const User_Register = async (req, res) => {
       password,
       phone,
       accountOtp: String(otp),
+      otp: otp,
+      otpExpiary: expiry,
     });
 
     // token generate
-    const token = JWT.sign(
-      { id: data?._id, email: data?.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    // const token = JWT.sign(
+    //   { id: data?._id, email: data?.email },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "24h" }
+    // );
 
     // User Mail send
 
     const subject = "Welcome to MR Cuban! Your Journey Starts Here 🚗";
-    const message = WelcomeHTML();
+    const message = WelcomeHTMLWithOTP(otpv);
 
     await sendMails(data?.email, subject, message);
 
     res
       .status(201)
-      .json({ msg: "User Register Successfully", data: data, token });
+      .json({ msg: "OTP Send to your register mail address", data: data });
   } catch (error) {
     ErrorMsg(res, error);
   }
 };
+
+
+export const Verify_Account = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({
+      $and: [{ email: email.toLowerCase() }],
+    });
+
+    if (!user) return res.status(400).json({ msg: "Account Not Exist" });
+    if (user?.otp === null) {
+      return res.status(400).jaon({ msg: "OTP is Expired or Reset" });
+    }
+
+    const currentDateTime = new Date();
+    if (currentDateTime > user?.otpExpiary) {
+      await User.findByIdAndUpdate(
+        { _id: user?._id },
+        { otp: null, otpExpiary: null }
+      );
+      return res.status(400).json({ msg: "OTP is Expired!" });
+    }
+
+    if (String(otp) !== user?.otp)
+      return res.status(400).json({ msg: "OTP is Invalid!" });
+
+    const data = await User.findByIdAndUpdate(
+      { _id: user?._id },
+      { otp: null, otpExpiary: null,verify:true }
+    );
+
+    res.status(200).json({ msg: "Account Activate Successfully", data });
+  } catch (error) {
+    console.log(error);
+    Error(res, error);
+  }
+};
+
+
 
 export const User_Login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const existuser = await User.findOne({
-      email: email.toLowerCase(),
+      $and: [
+        {
+          email: email.toLowerCase(),
+        },
+        { verify: true },
+      ],
     });
 
     if (!existuser) return res.status(400).json({ msg: "Invalid Credintials" });
@@ -82,9 +136,7 @@ export const LoadUser = async (req, res) => {
   try {
     const data = await User.findOne({ _id: req.id });
 
-    return res
-      .status(200)
-      .json({ msg: "User Fetch", data});
+    return res.status(200).json({ msg: "User Fetch", data });
   } catch (error) {
     ErrorMsg(res, error);
   }
