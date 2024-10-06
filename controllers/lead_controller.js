@@ -19,6 +19,7 @@ export const CreateLead = async (req, res) => {
       id,
       otp,
       seat,
+      km
     } = req.body;
 
     const pickupdate = new Date(pickdate).toLocaleDateString();
@@ -47,6 +48,7 @@ export const CreateLead = async (req, res) => {
       status: "pending",
       trip_type: type,
       seater: seat,
+      distance:km
     });
 
     return res.status(200).json({ msg: "Lead Generate Successfully", data });
@@ -71,11 +73,11 @@ export const DisplayOrderLeads = async (req, res) => {
 
 export const AcceptOrderLead = async (req, res) => {
   try {
-    const { price, id, driverId, driverName, model, rating, orders, phone } =
+    const { price, id, driverId, driverName, model, rating, orders, phone,img } =
       req.body;
 
     const order = await Lead.findById({ _id: id }, "drivers");
-    console.log(order);
+    
     await order.drivers.push({
       id: driverId,
       name: driverName,
@@ -84,6 +86,7 @@ export const AcceptOrderLead = async (req, res) => {
       rating: rating,
       orders: orders, // orders length
       phone: phone,
+      img:img
     });
 
     const data = await Lead.findByIdAndUpdate(
@@ -152,6 +155,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       otp: lead?.otp,
       carDetails: driver[0],
       seater: lead?.seater,
+      km:lead?.distance
     });
 
     // Generate order for customer
@@ -172,6 +176,7 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       driver: driver,
       driverOrderId: driverOrder?._id,
       seater: lead?.seater,
+      km:lead?.distance
     });
     await Notification.create({
       title: "Ride Confirmation",
@@ -188,7 +193,6 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       "The customer has successfully accepted the ride. Please proceed with the service."
     );
 
-    console.log(notice);
     return res
       .status(200)
       .json({ msg: "Order Accept by Customer Successfully", data: [] });

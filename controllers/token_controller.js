@@ -1,5 +1,7 @@
 import { Expo } from "expo-server-sdk";
 import { Tokens } from "../models/expo.js";
+import { Driver } from "../models/driver.js";
+import { Rides } from "../models/rides.js";
 
 // Save Token Function
 export const SavedToken = async (req, res) => {
@@ -25,14 +27,20 @@ export const SavedToken = async (req, res) => {
 // Send Notification Function
 export const SendNotification = async (req, res) => {
   try {
-    const { title, message } = req.query;
+    const { title, message, seat } = req.query;
 
     let expo = new Expo();
 
-    const tokens = await Tokens.find({}, "token");
+    const drivers = await Rides.find({ seat: Number(seat) });
+    let newTokens = [];
+    for (let i = 0; i < drivers?.length; i++) {
+      let temp = await Tokens.find({ partnerId: drivers[i]?.driverId });
+      newTokens.push(...temp);
+    }
+
     let messages = [];
 
-    for (let pushToken of tokens) {
+    for (let pushToken of newTokens) {
       // Check if the token is a valid Expo push token
       if (!Expo.isExpoPushToken(pushToken.token)) {
         console.error(
@@ -111,6 +119,6 @@ export const SendSingularNotification = async (id, title, message) => {
     return "Notification Sent";
   } catch (error) {
     console.log(error);
-    return error||"Error sending notifications" ;
+    return error || "Error sending notifications";
   }
 };
