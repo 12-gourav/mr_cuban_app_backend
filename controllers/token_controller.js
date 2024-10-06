@@ -34,11 +34,12 @@ export const SendNotification = async (req, res) => {
     const drivers = await Rides.find({ seat: Number(seat) });
     let newTokens = [];
     for (let i = 0; i < drivers?.length; i++) {
-      let temp = await Tokens.find({ partnerId: drivers[i]?.driverId });
-      newTokens.push(...temp);
+      let temp = await Tokens.findOne({ partnerId: drivers[i]?.driverId });
+      newTokens.push(temp);
     }
 
     let messages = [];
+
 
     for (let pushToken of newTokens) {
       // Check if the token is a valid Expo push token
