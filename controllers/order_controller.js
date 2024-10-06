@@ -159,7 +159,7 @@ export const DriverHistoryOrder = async (req, res) => {
       // Fetch user details for all orders in parallel
       userDetails = await Promise.all(
         data.map((order) =>
-          User.findById(order.customerId || "", "phone")
+          User.findById(order.customerId || "", "phone name")
             .lean()
             .exec()
         )

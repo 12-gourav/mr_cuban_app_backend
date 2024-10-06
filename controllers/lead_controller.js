@@ -276,18 +276,18 @@ export const FinishRide = async (req, res) => {
 
     const data = await DriverOrder.findById({ _id: id }, "status");
 
-    if (data?.status === "Start") {
+    if (data?.status === "start") {
       return res.status(400).json({ msg: "Something went wrong" });
     }
 
-    await DriverOrder.findByIdAndUpdate({ _id: id }, { status: "complete" });
+    await DriverOrder.findByIdAndUpdate({ _id: id }, { status: "complete",paymentStatus:"complete" });
 
     await CustomerOrder.findOneAndUpdate(
       { driverOrderId: id },
       { status: "complete", paymentStatus: "complete" }
     );
 
-    return res.status(200).json({ msg: "Order Start Successfully", data: [] });
+    return res.status(200).json({ msg: "Ride Finsh Successfully", data: [] });
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: error });
