@@ -3,8 +3,8 @@ import { addRide, GetRides, RidesDelete } from "../controllers/rides_controller.
 
 const router = express.Router();
 
-;
-router.get("/create/ride", addRide);
+
+router.post("/create/ride", addRide);
 router.get("/get/ride",GetRides);
 router.get("/delete/ride",RidesDelete);
 
