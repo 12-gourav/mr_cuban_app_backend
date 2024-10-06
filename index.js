@@ -15,6 +15,7 @@ import RideRoutes from "./routes/rides_route.js";
 import RatingRoutes from "./routes/rating_route.js";
 import TokenRoutes from "./routes/token_route.js"
 import AdminRoutes from "./routes/admin_routes.js";
+import VicheleRoutes from "./routes/vichele_routes.js"
 
 config({path:"./config/.env"});
 const app  = express();
@@ -47,7 +48,8 @@ app.use("/api/v1",DriverRoutes);
 app.use("/api/v1",RideRoutes);
 app.use("/api/v1",RatingRoutes);
 app.use("/api/v1",TokenRoutes);
-app.use("/api/v1",AdminRoutes)
+app.use("/api/v1",AdminRoutes);
+app.use("/api/v1",VicheleRoutes)
 
 
 app.get("/",(req,res)=>{

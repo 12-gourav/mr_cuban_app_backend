@@ -1,5 +1,7 @@
 import { Driver } from "../models/driver.js";
 import { User } from "../models/user.js";
+import { DriverOrder } from "../models/driverOrder.js";
+import { CustomerOrder } from "../models/order.js";
 import { ActivationHTML } from "../templates/templates.js";
 import { sendMails } from "../utils/SendMails.js";
 
@@ -99,5 +101,53 @@ export const LoginAPI = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
+  }
+};
+
+
+
+export const FetchDriverOrders = async (req, res) => {
+  try {
+    const { page, limit ,id} = req.query;
+
+    const pageNo = parseInt(page) || 1;
+    const pageSize = parseInt(limit) || 20;
+
+    const skip = (pageNo - 1) * pageSize;
+
+    const total = await DriverOrder.countDocuments({driverId:id});
+    const data = await DriverOrder.find({driverId:id})
+      .limit(pageSize)
+      .skip(skip)
+      .sort({ createdAt: 1 });
+
+    return res.status(200).json({ msg: "success", data, total });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ msg: error });
+  }
+};
+
+
+
+export const FetchUserOrders = async (req, res) => {
+  try {
+    const { page, limit ,id} = req.query;
+
+    const pageNo = parseInt(page) || 1;
+    const pageSize = parseInt(limit) || 20;
+
+    const skip = (pageNo - 1) * pageSize;
+
+    const total = await CustomerOrder.countDocuments({customerId:id});
+    const data = await CustomerOrder.find({customerId:id})
+      .limit(pageSize)
+      .skip(skip)
+      .sort({ createdAt: 1 });
+
+    return res.status(200).json({ msg: "success", data, total });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ msg: error });
   }
 };
