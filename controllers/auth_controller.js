@@ -21,10 +21,13 @@ export const User_Register = async (req, res) => {
       );
       if (checkOrder?.length === 0) {
         await User?.findOneAndDelete({ email: email.toLowerCase() });
+
+        return res
+          .status(400)
+          .json({ msg: "User already exist please retry after 2 min" });
+      } else {
+        return res.status(400).json({ msg: "User already exist" });
       }
-      return res
-        .status(400)
-        .json({ msg: "User already exist please retry after 2 min" });
     }
 
     // OTP Generate
