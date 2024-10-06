@@ -1,13 +1,10 @@
 import { User } from "../models/user.js";
-import {
-  ForgetmailHTML,
-
-  WelcomeHTMLWithOTP,
-} from "../templates/templates.js";
+import { ForgetmailHTML, WelcomeHTMLWithOTP } from "../templates/templates.js";
 import { ErrorMsg } from "../utils/Error.js";
 import JWT from "jsonwebtoken";
 import { sendMails } from "../utils/SendMails.js";
 import { OTP_Generator } from "../utils/util.js";
+import { CustomerOrder } from "../models/order.js";
 
 export const User_Register = async (req, res) => {
   try {
@@ -17,7 +14,18 @@ export const User_Register = async (req, res) => {
       $or: [{ phone: phone }, { email: email.toLowerCase() }],
     });
 
-    if (existuser) return res.status(400).json({ msg: "User already exist!" });
+    if (existuser) {
+      const checkOrder = await CustomerOrder.find(
+        { customerId: existuser?._id },
+        "_id"
+      );
+      if (checkOrder?.length === 0) {
+        await User?.findOneAndDelete({ email: email.toLowerCase() });
+      }
+      return res
+        .status(400)
+        .json({ msg: "User already exist please retry after 2 min" });
+    }
 
     // OTP Generate
     const otp = await OTP_Generator();
@@ -36,13 +44,6 @@ export const User_Register = async (req, res) => {
       otpExpiary: expiry,
     });
 
-    // token generate
-    // const token = JWT.sign(
-    //   { id: data?._id, email: data?.email },
-    //   process.env.JWT_SECRET,
-    //   { expiresIn: "24h" }
-    // );
-
     // User Mail send
 
     const subject = "Welcome to MR Cuban! Your Journey Starts Here 🚗";
@@ -57,7 +58,6 @@ export const User_Register = async (req, res) => {
     ErrorMsg(res, error);
   }
 };
-
 
 export const Verify_Account = async (req, res) => {
   try {
@@ -86,17 +86,20 @@ export const Verify_Account = async (req, res) => {
 
     const data = await User.findByIdAndUpdate(
       { _id: user?._id },
-      { otp: null, otpExpiary: null,verify:true }
+      { otp: null, otpExpiary: null, verify: true }
     );
-
-    res.status(200).json({ msg: "Account Activate Successfully", data });
+    // token generate
+    const token = JWT.sign(
+      { id: data?._id, email: data?.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+    res.status(200).json({ msg: "Registration Successfully", data, token });
   } catch (error) {
     console.log(error);
     Error(res, error);
   }
 };
-
-
 
 export const User_Login = async (req, res) => {
   try {
