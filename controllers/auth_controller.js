@@ -33,7 +33,7 @@ export const User_Register = async (req, res) => {
     // OTP Generate
     const otp = await OTP_Generator();
 
-    const otpv = Math.floor(100000 + Math.random() * 900000);
+   const otpv = Math.floor(1000 + Math.random() * 9000);
     const expiry = new Date(Date.now() + 5 * 60 * 1000);
 
     // User Register
@@ -43,7 +43,7 @@ export const User_Register = async (req, res) => {
       password,
       phone,
       accountOtp: String(otp),
-      otp: otp,
+      otp: otpv,
       otpExpiary: expiry,
     });
 

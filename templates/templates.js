@@ -123,7 +123,7 @@ export const WelcomeHTMLWithOTP = (otp) => {
             <p>
               If you didn't request this, please ignore this email or contact our support team.
             </p>
-            <a href="https://your-app-url.com" class="cta-button">Verify My Account</a>
+          
           </div>
           <div class="footer">
             <p>&copy; 2024 MR Cuban. All rights reserved.</p>
