@@ -6,6 +6,8 @@ export const addRide = async (req, res) => {
     const { id, name, no, seat } = req.body;
     const { images } = req.files;
 
+    console.log(images)
+
     const check = await Rides.find({
       $and: [{ driverId: id }, { modelNumber: no }],
     });
