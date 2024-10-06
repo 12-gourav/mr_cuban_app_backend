@@ -1,7 +1,7 @@
 import { User } from "../models/user.js";
 import {
   ForgetmailHTML,
-  WelcomeHTML,
+
   WelcomeHTMLWithOTP,
 } from "../templates/templates.js";
 import { ErrorMsg } from "../utils/Error.js";
