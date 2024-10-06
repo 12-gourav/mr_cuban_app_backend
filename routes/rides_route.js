@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post("/create/ride", addRide);
 router.get("/get/ride",GetRides);
+router.get("/get/ride/active",GetRides);
+
 router.get("/delete/ride",RidesDelete);
 
 
