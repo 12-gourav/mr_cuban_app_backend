@@ -18,7 +18,10 @@ export const customerUpcommingOrder = async (req, res) => {
     });
 
     const data = await CustomerOrder.find({
-      $and: [{ customerId: id }, { status: "accept" }],
+      $and: [
+        { customerId: id },
+        { $or: [{ status: "accept" }, { status: "start" }] },
+      ],
     })
       .skip(skip)
       .limit(pageSize)
@@ -103,7 +106,9 @@ export const DriverUpcommingOrder = async (req, res) => {
       // Fetch user details for all orders in parallel
       userDetails = await Promise.all(
         data.map((order) =>
-          User.findById(order.customerId || "", "phone name").lean().exec()
+          User.findById(order.customerId || "", "phone name")
+            .lean()
+            .exec()
         )
       );
     }
@@ -148,17 +153,19 @@ export const DriverHistoryOrder = async (req, res) => {
       .limit(pageSize)
       .sort({ createdAt: -1 });
 
-      let userDetails = [];
+    let userDetails = [];
 
-      if (data.length > 0) {
-        // Fetch user details for all orders in parallel
-        userDetails = await Promise.all(
-          data.map((order) =>
-            User.findById(order.customerId || "", "phone").lean().exec()
-          )
-        );
-      }
-  
+    if (data.length > 0) {
+      // Fetch user details for all orders in parallel
+      userDetails = await Promise.all(
+        data.map((order) =>
+          User.findById(order.customerId || "", "phone")
+            .lean()
+            .exec()
+        )
+      );
+    }
+
     const mainData = { data: data, user: userDetails, total: total };
 
     return res
