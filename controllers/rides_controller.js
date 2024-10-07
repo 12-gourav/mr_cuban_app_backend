@@ -86,10 +86,11 @@ export const GetRides = async (req, res) => {
 
 export const GetActiveRides = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id,status } = req.query;
+
 
     const data = await Rides.find({
-      $and: [{ driverId: id }, { status: true }],
+      $and: [{ driverId: id }, { status: Boolean(status) }],
     });
 
     return res.status(200).json({ msg: "Rides Get Successfully", data });
