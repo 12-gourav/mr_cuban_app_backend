@@ -1,6 +1,5 @@
 import { Expo } from "expo-server-sdk";
 import { Tokens } from "../models/expo.js";
-import { Driver } from "../models/driver.js";
 import { Rides } from "../models/rides.js";
 
 // Save Token Function
@@ -31,8 +30,10 @@ export const SendNotification = async (req, res) => {
 
     let expo = new Expo();
 
-    const drivers = await Rides.find({ seat: Number(seat) });
-    console.log(drivers);
+    const drivers = await Rides.find({
+      $and: [{ seat: Number(seat) }, { status: true }],
+    });
+    
     let newTokens = [];
 
     for (let i = 0; i < drivers?.length; i++) {

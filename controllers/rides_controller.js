@@ -112,19 +112,20 @@ export const RidesDelete = async (req, res) => {
   }
 };
 
-
-
 export const GetDisableRides = async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id, status } = req.query;
 
-    const data = await Rides.find({
-      $and: [{ driverId: id }, { status: false }],
-    });
+    const data = await Rides.findByIdAndUpdate(
+      {
+        _id: id,
+      },
+      { status: status }
+    );
 
     return res.status(200).json({ msg: "Rides Update Successfully", data });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
   }
-}
+};
