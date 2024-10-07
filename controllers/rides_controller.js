@@ -86,11 +86,10 @@ export const GetRides = async (req, res) => {
 
 export const GetActiveRides = async (req, res) => {
   try {
-    const { id,status } = req.query;
-
+    const { id } = req.query;
 
     const data = await Rides.find({
-      $and: [{ driverId: id }, { status: Boolean(status) }],
+      $and: [{ driverId: id }, { status: true }],
     });
 
     return res.status(200).json({ msg: "Rides Get Successfully", data });
@@ -112,3 +111,20 @@ export const RidesDelete = async (req, res) => {
     return res.status(400), json({ msg: error });
   }
 };
+
+
+
+export const GetDisableRides = async (req, res) => {
+  try {
+    const { id } = req.query;
+
+    const data = await Rides.find({
+      $and: [{ driverId: id }, { status: false }],
+    });
+
+    return res.status(200).json({ msg: "Rides Update Successfully", data });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ msg: error });
+  }
+}
