@@ -22,20 +22,23 @@ export const CreateLead = async (req, res) => {
       km,
     } = req.body;
 
+    const pickupdate = new Date(pickdate).toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+    });
+    const returnDate =
+      dropdate !== ""
+        ? new Date(pickdate).toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+          })
+        : "";
 
-    const pickupdate = new Date(pickdate).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-    const returnDate = dropdate!=="" ?  new Date(pickdate).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }):"";
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
 
+    await Lead.deleteMany({
+      status: "pending",
+      createdAt: { $lt: thirtyMinutesAgo },
+    });
 
-  
-
-      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-
-      await Lead.deleteMany({
-        status: "pending",
-        createdAt: { $lt: thirtyMinutesAgo }
-      });
-      
     const data = await Lead.create({
       pickup_address: pickup,
       drop_address: drop,
@@ -146,8 +149,8 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance2: lead?.drop_address,
       distance3: lead?.return_pickup_address,
       distance4: lead?.return_drop_address,
-      date1: lead?.pickup_date + " | " + lead?.pickup_time,
-      date2: lead?.return_date + " | " + lead?.return_time,
+      date1: lead?.pickup_date,
+      date2: lead?.return_date,
       price: driver?.price,
       driverId: driverId,
       status: "accept",
@@ -167,8 +170,8 @@ export const AcceptOrderLeadByCustomer = async (req, res) => {
       distance2: lead?.drop_address,
       distance3: lead?.return_pickup_address,
       distance4: lead?.return_drop_address,
-      date1: lead?.pickup_date + " | " + lead?.pickup_time,
-      date2: lead?.return_date + " | " + lead?.return_time,
+      date1: lead?.pickup_date,
+      date2: lead?.return_date,
       price: driver?.price,
       status: "accept",
       paymentStatus: "pending",
