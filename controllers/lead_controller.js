@@ -22,12 +22,20 @@ export const CreateLead = async (req, res) => {
       km,
     } = req.body;
 
-    const pickupdate = new Date(pickdate).toLocaleString();
-    const returnDate =
-      dropdate !== "" ? new Date(dropdate).toLocaleString() : "";
 
-    await Lead.deleteMany({ status: "pending" });
+    const pickupdate = new Date(pickdate).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    const returnDate = dropdate!=="" ?  new Date(pickdate).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }):"";
 
+
+  
+
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+
+      await Lead.deleteMany({
+        status: "pending",
+        createdAt: { $lt: thirtyMinutesAgo }
+      });
+      
     const data = await Lead.create({
       pickup_address: pickup,
       drop_address: drop,
