@@ -27,7 +27,7 @@ export const CreateLead = async (req, res) => {
     });
     const returnDate =
       dropdate !== ""
-        ? new Date(pickdate).toLocaleString("en-IN", {
+        ? new Date(dropdate).toLocaleString("en-IN", {
             timeZone: "Asia/Kolkata",
           })
         : "";
