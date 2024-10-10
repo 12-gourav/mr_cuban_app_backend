@@ -22,27 +22,19 @@ export const CreateLead = async (req, res) => {
       km,
     } = req.body;
 
-    const pickupdate = new Date(pickdate).toLocaleDateString();
-    const pickuptime = new Date(pickdate)?.toLocaleTimeString();
-
+    const pickupdate = new Date(pickdate).toLocaleString();
     const returnDate =
-      dropdate !== "" ? new Date(dropdate).toLocaleDateString() : "";
-    const returnTime =
-      dropdate !== "" ? new Date(dropdate).toLocaleTimeString() : "";
+      dropdate !== "" ? new Date(dropdate).toLocaleString() : "";
 
-    const leadCheck = await Lead.findOneAndDelete({
-      $and: [{ customer_id: id }, { status: "pending" }],
-    });
+    await Lead.deleteMany({ status: "pending" });
 
     const data = await Lead.create({
       pickup_address: pickup,
       drop_address: drop,
       pickup_date: pickupdate,
-      pickup_time: pickuptime,
       return_pickup_address: returnPickup || "",
       return_drop_address: returnDrop || "",
       return_date: returnDate,
-      return_time: returnTime,
       customer_id: id,
       otp: otp,
       status: "pending",
