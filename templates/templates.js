@@ -23,9 +23,8 @@ export const ForgetmailHTML = (otp) => {
     `;
 };
 
-
 export const WelcomeHTMLWithOTP = (otp) => {
-    return `
+  return `
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -136,8 +135,8 @@ export const WelcomeHTMLWithOTP = (otp) => {
       </body>
       </html>
     `;
-  };
-  
+};
+
 //--------------------------------------------Driver Templates--------------------------------------------->
 
 export const WelcomeDriverHTML = () => {
@@ -348,4 +347,101 @@ export const ForgetDrivermailHTML = (otp) => {
           </div>
         </div>
       `;
+};
+
+// --------------------------------------------Dev Templates-------------------------------
+
+export const CreateOrderDevTemplate = (
+  pickup_address,
+  drop_address,
+  pickup_date,
+  customer_id,
+  trip_type,
+  seater,
+  distance
+) => {
+  return ` <!DOCTYPE html>
+<html>
+<head>
+  <title>Order Confirmation - Mr Cuban</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background-color: #ff6600;
+      color: #ffffff;
+      text-align: center;
+      padding: 20px;
+    }
+    .header h1 {
+      margin: 0;
+    }
+    .content {
+      padding: 20px;
+    }
+    .content p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin: 10px 0;
+    }
+    .info {
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 10px;
+    }
+    .info p {
+      margin: 5px 0;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      color: #888888;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1>Mr Cuban</h1>
+      <p>Your Ride Booking Confirmation</p>
+    </div>
+    <div class="content">
+      <p>Hi <strong>{{customerName}}</strong>,</p>
+      <p>Thank you for booking with <strong>Mr Cuban</strong>! Here are your ride details:</p>
+      <div class="info">
+        <p><strong>Booking ID:</strong> ${customer_id}</p>
+        <p><strong>Ride Date:</strong> ${pickup_date}</p>
+        <p><strong>Pickup Location:</strong> ${pickup_address}</p>
+        <p><strong>Drop-off Location:</strong> ${drop_address}</p>
+        <p><strong>Total Distance:</strong> ${distance}</p>
+        <p><strong>Trip Type:</strong> ${trip_type}</p>
+        <p><strong>Seat:</strong> ${seater}</p>
+
+
+      </div>
+      <p>If you have any questions or need assistance, feel free to contact us.</p>
+      <p>Safe travels!</p>
+    </div>
+    <div class="footer">
+      <p>&copy; {{year}} Mr Cuban. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
 };

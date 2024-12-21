@@ -5,6 +5,8 @@ import { Driver } from "../models/driver.js";
 import { Notification } from "../models/notification.js";
 import { User } from "../models/user.js";
 import { SendSingularNotification } from "./token_controller.js";
+import { sendDevMail } from "../utils/SendMails.js";
+import { CreateOrderDevTemplate } from "../templates/templates.js";
 
 export const CreateLead = async (req, res) => {
   try {
@@ -54,6 +56,19 @@ export const CreateLead = async (req, res) => {
       distance: km,
     });
 
+    await sendDevMail(
+      "mrcubandev@gmail.com",
+      "Order Create",
+      CreateOrderDevTemplate(
+        pickup_address,
+        drop_address,
+        pickup_date,
+        customer_id,
+        trip_type,
+        seater,
+        distance
+      )
+    );
     return res.status(200).json({ msg: "Lead Generate Successfully", data });
   } catch (error) {
     console.log(error);
