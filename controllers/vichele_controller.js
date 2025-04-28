@@ -5,7 +5,7 @@ export const createVichele = async (req, res) => {
     const { name, seat } = req.query;
 
     const check = await Vichele.find({ seat: seat });
-    console.log(check)
+
     if (check?.length > 0) {
       return res.status(400).json({ msg: "Model already exist" });
     } else {

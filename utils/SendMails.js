@@ -59,10 +59,6 @@ export const senBrevoMail = async (email, subject, html) => {
       pass: process.env.BREVO_PASSKEY, // Your Brevo SMTP Key
     },
   });
-
-
-
-
   await transport.sendMail({
     from: "mrcubandev@gmail.com",
     to: email,
